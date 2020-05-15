@@ -8,7 +8,6 @@ const User = require("../models/User");
 const auth = require("../middleware/auth");
 
 router.get("/", auth, async (req, res) => {
-    console.log("you hit here!");
     try {
         const user = await User.findById(req.user.id).select("-password");
         res.json(user);
