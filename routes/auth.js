@@ -3,14 +3,10 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("config");
-const auth = require("../middleware/auth");
 const { check, validationResult } = require("express-validator");
-
 const User = require("../models/User");
+const auth = require("../middleware/auth");
 
-// @route     GET api/auth
-// @desc      Get logged in user
-// @access    Private
 router.get("/", auth, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select("-password");
@@ -21,9 +17,9 @@ router.get("/", auth, async (req, res) => {
     }
 });
 
-// @route     POST api/auth
-// @desc      Auth user & get token
-// @access    Public
+// @route   Get api/auth
+//@desc     Get logged in user
+//@access   Private
 router.post(
     "/",
     [
@@ -40,11 +36,10 @@ router.post(
 
         try {
             let user = await User.findOne({ email });
-
             if (!user) {
-                return res.status(400).json({ msg: "Invalid Credentials" });
+                return res.status(400).json({ msg: "User not Found" });
             }
-
+            console.log(user);
             const isMatch = await bcrypt.compare(password, user.password);
 
             if (!isMatch) {
@@ -69,10 +64,14 @@ router.post(
                 }
             );
         } catch (err) {
-            console.error(err.message);
+            console.log(err.message);
             res.status(500).send("Server Error");
         }
     }
 );
+
+// @route   POST api/auth
+//@desc     Auth user & get token
+//@access   Public
 
 module.exports = router;
