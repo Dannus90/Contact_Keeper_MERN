@@ -50,6 +50,7 @@ const AuthState = (props) => {
             },
         };
         try {
+            console.log("It reached here!");
             const res = await axios.post("/api/users", formData, config);
 
             dispatch({
